@@ -1,5 +1,7 @@
 package chapter3;
 
+import chapter2.Apple;
+import chapter2.Color;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -7,11 +9,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+
+import static java.util.Comparator.*;
 
 public class Chapter3Test {
     @Test
@@ -67,6 +73,7 @@ public class Chapter3Test {
     void testConsumer() {
         List<Integer> integerList = List.of(1, 2, 3, 4, 5);
         Consumer<Integer> consumer = (Integer i) -> System.out.println(i);
+        Consumer<Integer> consumer1 = System.out::println;
         forEach(integerList, consumer);
     }
 
@@ -98,5 +105,28 @@ public class Chapter3Test {
 
         Assertions.assertThat(s.test(100)).isFalse();
         Assertions.assertThat(s1.test(100)).isTrue();
+    }
+
+    @Test
+    void lambdaTest() {
+        List<Apple> inventory = new ArrayList<>();
+        inventory.addAll(Arrays.asList(
+                new Apple(Color.GREEN, 80),
+                new Apple(Color.GREEN, 155),
+                new Apple(Color.RED, 120)
+        ));
+
+        inventory.sort(new AppleComparator());
+
+        inventory.sort(new Comparator<Apple>() {
+            @Override
+            public int compare(Apple o1, Apple o2) {
+                return o1.getWeight() - o2.getWeight();
+            }
+        });
+
+        inventory.sort((o1, o2) -> o1.getWeight() - o2.getWeight());
+
+        inventory.sort(comparing(Apple::getWeight));
     }
 }
