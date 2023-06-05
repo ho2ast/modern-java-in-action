@@ -109,10 +109,11 @@ public class Chapter3Test {
 
     @Test
     void lambdaTest() {
-        List<Apple> inventory = new ArrayList<>();
-        inventory.addAll(Arrays.asList(
+        List<Apple> inventory = new ArrayList<>(Arrays.asList(
                 new Apple(Color.GREEN, 80),
                 new Apple(Color.GREEN, 155),
+                new Apple(Color.GREEN, 151),
+                new Apple(Color.RED, 155),
                 new Apple(Color.RED, 120)
         ));
 
@@ -127,6 +128,38 @@ public class Chapter3Test {
 
         inventory.sort((o1, o2) -> o1.getWeight() - o2.getWeight());
 
-        inventory.sort(comparing(Apple::getWeight));
+        inventory.sort(comparing(Apple::getWeight).reversed());
+
+        for (Apple apple : inventory) {
+            System.out.println(apple.getWeight());
+        }
+
+        Predicate<Apple> redApple = (Apple apple) -> Color.RED.equals(apple.getColor());
+
+        Predicate<Apple> notRedApple = redApple.negate();
+        Predicate<Apple> notRedAndHeavyApple = notRedApple.and((Apple apple) -> apple.getWeight() > 150);
+        Predicate<Apple> redAndHeavyAppleOrGreen = notRedAndHeavyApple.or((Apple apple) -> Color.GREEN.equals(apple.getColor()));
+        inventory = filter(inventory, redAndHeavyAppleOrGreen);
+
+        for (Apple apple : inventory) {
+            System.out.println(apple.getColor());
+        }
+    }
+
+    @Test
+    void FunctionCombination() {
+        Function<Integer, Integer> f = x -> x + 1;
+        Function<Integer, Integer> g = x -> x * 2;
+        Function<Integer, Integer> h = f.andThen(g); // g(f(x))
+
+        int result = h.apply(1);
+        System.out.println(result);
+
+        Function<Integer, Integer> a = x -> x + 1;
+        Function<Integer, Integer> b = x -> x * 2;
+        Function<Integer, Integer> c = a.compose(b); // a(b(x))
+
+        int result2 = c.apply(1);
+        System.out.println(result2);
     }
 }
