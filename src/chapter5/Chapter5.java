@@ -1,11 +1,13 @@
 package chapter5;
 
 import chapter4.Dish;
+import com.sun.jdi.IntegerValue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 public class Chapter5 {
@@ -141,5 +143,75 @@ public class Chapter5 {
                 .map(Dish::getCalories)
                 .reduce(0, Integer::sum);
         System.out.println("calorieSum = " + calorieSum);
+
+        // 실전 연습
+        Trader raoul = new Trader("Raoul", "Cambridge");
+        Trader mario = new Trader("Mario", "Milan");
+        Trader alan = new Trader("Alan", "Cambridge");
+        Trader brian = new Trader("Brian", "Cambridge");
+
+        List<Transaction> transactions = Arrays.asList(
+                new Transaction(brian, 2011, 300),
+                new Transaction(raoul, 2012, 1000),
+                new Transaction(raoul, 2011, 400),
+                new Transaction(mario, 2012, 710),
+                new Transaction(mario, 2012, 700),
+                new Transaction(alan, 2012, 950)
+        );
+
+        // 1. 2011년에 일어난 모든 트랜잭션을 찾아 값을 오름차순으로 정리하시오.
+        List<Transaction> no1 = transactions.stream()
+                .filter(transaction -> transaction.getYear() == 2011)
+                .sorted((o1, o2) -> o1.getValue() - o2.getValue())
+                .collect(toList());
+        System.out.println("no1 = " + no1);
+
+        // 2. 거래자가 근무하는 모든 도시를 중복 없이 나열하시오.
+        List<String> no2 = transactions.stream()
+                .map(transaction -> transaction.getTrader().getCity())
+                .distinct()
+                .collect(toList());
+        System.out.println("no2 = " + no2);
+
+        // 3. 케임브리지에서 근무하는 모든 거래자를 찾아서 이름순으로 정렬하시오.
+        List<Trader> no3 = transactions.stream()
+                .map(transaction -> transaction.getTrader())
+                .filter(trader -> trader.getCity().equals("Cambridge"))
+                .distinct()
+                .sorted(comparing(Trader::getName))
+                .collect(toList());
+        System.out.println("no3 = " + no3);
+
+        // 4. 모든 거래자의 이름을 알파벳순으로 정렬해서 반환하시오.
+        String no4 = transactions.stream()
+                .map(transaction -> transaction.getTrader().getName())
+                .distinct()
+                .sorted()
+                .reduce("", (s1, s2) -> s1 + s2);
+        System.out.println("no4 = " + no4);
+
+        // 5. 밀라노에 거래자가 있는가?
+        boolean no5 = transactions.stream()
+                .anyMatch(transaction -> transaction.getTrader().getCity().equals("Milano"));
+        System.out.println("no5 = " + no5);
+
+        // 6. 케임브리지에 거주하는 거래자의 모든 트랜잭션값을 출력하시오.
+        List<Integer> no6 = transactions.stream()
+                .filter(transaction -> transaction.getTrader().getCity().equals("Cambridge"))
+                .map(Transaction::getValue)
+                .collect(toList());
+        System.out.println("no6 = " + no6);
+
+        // 7. 전체 트랜잭션 중 최댓값은 얼마인가?
+        Optional<Integer> no7 = transactions.stream()
+                .map(transaction -> transaction.getValue())
+                .reduce(Integer::max);
+        System.out.println("no7 = " + no7);
+
+        // 8. 전체 트랜잭션 중 최솟값은 얼마인가?
+        Optional<Integer> no8 = transactions.stream()
+                .map(Transaction::getValue)
+                .reduce(Integer::min);
+        System.out.println("no8 = " + no8);
     }
 }
