@@ -6,6 +6,8 @@ import com.sun.jdi.IntegerValue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -213,5 +215,26 @@ public class Chapter5 {
                 .map(Transaction::getValue)
                 .reduce(Integer::min);
         System.out.println("no8 = " + no8);
+
+
+
+        // 기본형 특화 스트림
+        int sum = menu.stream()
+                .mapToInt(Dish::getCalories)
+                .sum();
+
+        OptionalInt max1 = menu.stream()
+                .mapToInt(Dish::getCalories)
+                .max();
+        int i = max1.orElse(1);
+
+        // 숫자 범위
+        // 1과 100 포함
+        IntStream intStream = IntStream.rangeClosed(1, 100)
+                .filter(n -> n % 2 == 0);
+        System.out.println(intStream.count());
+
+        // 1과 100 포함 안함
+        IntStream range = IntStream.range(1, 100);
     }
 }
