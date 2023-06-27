@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -93,6 +94,13 @@ public class Chapter5 {
                 .distinct()
                 .collect(toList());
         System.out.println("collect2 = " + collect2);
+
+        List<Stream<String>> uniqueCharacter2 = words2.stream()
+                .map(word -> word.split(""))
+                .map(Arrays::stream)
+                .distinct()
+                .collect(toList());
+        System.out.println("uniqueCharacter2 = " + uniqueCharacter2);
 
         List<String> uniqueCharacter = words2.stream()
                 .map(word -> word.split(""))
@@ -236,5 +244,22 @@ public class Chapter5 {
 
         // 1과 100 포함 안함
         IntStream range = IntStream.range(1, 100);
+
+        // 피타고라스 수
+        // a*a + b*b = c*c
+        // a를 2부터 99까지 구한다.
+        // 해당 a와 b의 범위인 2, 99까지 하여 a*a + b*b의 제곱근이 정수인 수를 찾는다.
+        // 해당수로 mapToObj를 하여 배열로 저장한다.
+        Stream<int[]> pythagoreanTriples = IntStream.rangeClosed(1, 100).boxed()
+                .flatMap(a ->
+                        IntStream.rangeClosed(1, 100)
+                                .filter(b -> Math.sqrt(a * a + b * b) % 1 == 0)
+                                .mapToObj(b -> new int[]{a, b, (int) Math.sqrt(a * a + b * b)})
+                );
+
+        pythagoreanTriples.limit(5)
+                .forEach(t -> System.out.printf("%d, %d, %d %n", t[0], t[1], t[2]));
+
+
     }
 }
