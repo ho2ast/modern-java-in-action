@@ -60,6 +60,29 @@ public class Chapter8 {
     referenceCodes.replaceAll(code -> Character.toUpperCase(code.charAt(0)) + code.substring(1));
     System.out.println(referenceCodes);
 
+//    8.3 맵처리
+//    Map 인터페이스에 새로 추가된 몇가지 디폴트 메서드
+//    forEach BiConsumer(키와 값을 인수로 받음) 메서드를 이용할 수 있다.
+    Map<String, Integer> ageOfFriends = Map.of("a", 10, "b", 20);
+    ageOfFriends.forEach((friendName, age) -> System.out.println("name: " + friendName + ", age: " + age));
+
+//    정렬 메서드
+    Map<String, String> favoriteMovies = Map.ofEntries(Map.entry("Raphael", "StarWars"),
+        Map.entry("Cristina", "Matrix"),
+        Map.entry("Zcho", "Ata"),
+        Map.entry("Lim", "Netflix"),
+        Map.entry("Adam", "Zep"));
+    favoriteMovies
+        .entrySet()
+        .stream()
+        .sorted(Map.Entry.comparingByKey())
+        .forEachOrdered(System.out::println);
+
+//    키가 존재하지 않을 때 사용할 수 있는 getOrDefault 메서드
+    Map<String, String> movies = Map.ofEntries(Map.entry("Nam", "Hello"));
+    System.out.println(movies.getOrDefault("Lim", "Netflix"));
+    System.out.println(movies);
+
   }
 
   static class Transaction {
