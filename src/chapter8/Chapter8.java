@@ -1,5 +1,7 @@
 package chapter8;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,6 +85,60 @@ public class Chapter8 {
     System.out.println(movies.getOrDefault("Lim", "Netflix"));
     System.out.println(movies);
 
+//    계산패턴
+//    맵에 키가 존재하는지 여부에 따라 어떤 동작을 실행하고 결과를 저장해야 하는 상황에서 사용
+
+    List<String> line = List.of("A", "b", "c", "D");
+    Map<String, String> dataToHash = new HashMap<>();
+
+    line.forEach(line2 -> dataToHash.computeIfAbsent(line2, Chapter8::addMap));
+
+    System.out.println(dataToHash);
+
+//    삭제 패턴
+//    키가 특정한 값과 연관되었을 대만 항목을 제거 하는 오버로드 버전 메서드 제공
+    Map<String, String> favoriteMovie = new HashMap<>();
+    favoriteMovie.put("keykey", "valuevalue");
+    favoriteMovie.put("keyke", "valuevalue");
+
+    favoriteMovie.remove("keykey", "valuevalue");
+
+    System.out.println(favoriteMovie);
+
+    favoriteMovie.replaceAll((k, v) -> v.toUpperCase());
+    System.out.println(favoriteMovie);
+
+
+//    합침
+    Map<String, String> family = Map.ofEntries(
+        Map.entry("Lim", "Netflix"),
+        Map.entry("Adam", "Zep"));
+
+    Map<String, String> friend = Map.ofEntries(
+        Map.entry("Raphael", "StarWars"),
+        Map.entry("Cristina", "Matrix"),
+        Map.entry("Zcho", "Ata"));
+
+    Map<String, String> everyone = new HashMap<>(family);
+    everyone.putAll(friend);
+    System.out.println(everyone);
+
+    Map<String, String> family2 = Map.ofEntries(
+        Map.entry("Lim", "Netflix"),
+        Map.entry("Adam", "Zep"));
+
+    Map<String, String> friend2 = Map.ofEntries(
+        Map.entry("Raphael", "StarWars"),
+        Map.entry("Cristina", "Matrix"),
+        Map.entry("Adam", "Zep"));
+
+    Map<String, String> everyone2 = new HashMap<>(family2);
+    friend2.forEach((k, v) ->
+        everyone2.merge(k, v, (v1, v2) -> v1 + " & " + v2));
+    System.out.println(everyone2);
+  }
+  public static String addMap(String key){
+    return "CC";
   }
 
   static class Transaction {
