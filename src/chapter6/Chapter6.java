@@ -10,11 +10,11 @@ public class Chapter6 {
   /**
    * <p> {@link java.util.stream.Collectors} 인터페이스 구현은 스트림의 요소를 어떤 식으로 도출할지 지정한다.
    */
-  enum CaloricLevel {
+  public enum CaloricLevel {
     DIET, NORMAL, FAT
   }
 
-  static List<Dish> menu = Arrays.asList(
+  public static List<Dish> menu = Arrays.asList(
       new Dish("pork", false, 800, Dish.Type.MEAT),
       new Dish("beef", false, 700, Dish.Type.MEAT),
       new Dish("chicken", false, 400, Dish.Type.MEAT),

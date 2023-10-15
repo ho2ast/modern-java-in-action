@@ -1,5 +1,7 @@
 package chapter4;
 
+import chapter6.Chapter6;
+
 public class Dish {
     private final String name;
     private final boolean vegetarian;
@@ -37,4 +39,11 @@ public class Dish {
     public enum Type {
         MEAT, FISH, OTHER
     }
+
+    public Chapter6.CaloricLevel getCaloricLevel() {
+        if (this.getCalories() < 400) return Chapter6.CaloricLevel.DIET;
+        else if (this.getCalories() < 700) return Chapter6.CaloricLevel.NORMAL;
+        else return Chapter6.CaloricLevel.FAT;
+    }
+
 }
