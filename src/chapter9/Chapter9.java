@@ -6,6 +6,7 @@ import chapter6.Chapter6;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -90,6 +91,42 @@ public class Chapter9 {
     boolean b1 = lowerCaseValidator.validate("bbb");
 //    람다 표현식 사용
     Validator lowerCase = new Validator((String s) -> s.matches("[a-z]+"));
+
+
+//    템플릿 메서드
+//    알고리즘의 개요를 제시한 다음에 알고리즘의 일부를 고칠 수 있는 유연함을 제공해야 할 때 사용
+
+//    abstract class OnlineBanking {
+//      public void processCustomer(int id, Consumer<Customer> makeCustomerHappy) {
+//        Customer c = Database.getCustomerWithId(id);
+//        makeCustomerHappy(c);
+//      }
+//
+//      abstract void makeCustomerHappy(Customer customer);
+//    }
+
+//    람다 표현식을 전달해서 다양한 동작을 추가할 수 있다.
+//    new OnlineBankingLambda().processCustomer(1337, (Customer c) -> System.out.println("Hello " + c.getName());
+
+
+//    옵저버
+//    어떤 이벤트가 발생했을 때 한 객체(주제)가 다른 객체 리스트(옵저버)에 자동으로 알림을 보내야 하는 상황에 사용...?
+    Feed f = new Feed();
+//    f.registerObserver(new NYTimes());
+//    f.registerObserver(new Guardian());
+    f.registerObserver((tweet -> {
+      if (tweet != null && tweet.contains("money")) {
+        System.out.println("Breaking news in NY! " + tweet);
+      }
+    }));
+
+    f.registerObserver((tweet -> {
+      if (tweet != null && tweet.contains("queen")) {
+        System.out.println("Breaking news in London! " + tweet);
+      }
+    }));
+
+    f.notifyObserver("The queen said");
   }
 
   static class Validator {
@@ -115,6 +152,5 @@ public class Chapter9 {
       return s.matches("[a-z]+");
     }
   }
-
 }
 
