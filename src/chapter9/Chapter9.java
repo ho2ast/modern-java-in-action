@@ -7,6 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -127,6 +130,27 @@ public class Chapter9 {
     }));
 
     f.notifyObserver("The queen said");
+
+
+//    의무체인
+//    한 객체가 어떤 작업을 처리한 다음 다른 객체로 결과를 전달하고
+//    다른 객체도 해야 할 작업을 처리한 다음 또 다른 객체로 전달하는 식이다.
+    ProcessingObject<String> p1 = new HeaderTextProcessing();
+    ProcessingObject<String> p2 = new SpellCheckerProcessing();
+    p1.setSuccessor(p2);
+    String result1 = p1.handle("Aren't labdas really sexy?!!");
+    System.out.println(result1);
+
+    UnaryOperator<String> headerProcessing = (String text) -> "From Raoul, Mario and Alan: " + text;
+    UnaryOperator<String> spellCheckerProcessing = (String text) -> text.replaceAll("labda", "lambda");
+    Function<String, String> pipeline = headerProcessing.andThen(spellCheckerProcessing);
+    String result2 = pipeline.apply("Aren't labdas really sexy?!!");
+    System.out.println(result2);
+
+//    팩토리
+//    인스턴스화 로직을 클라이언트에 노출하지 않고 객체를 만들 때 팩토리 디자인 패턴을 사용한다.
+    Product pF1 = ProductFactory.createProduct("loan");
+
   }
 
   static class Validator {
@@ -151,6 +175,80 @@ public class Chapter9 {
     public boolean execute(String s) {
       return s.matches("[a-z]+");
     }
+  }
+
+  private static abstract class ProcessingObject<T> {
+
+    protected ProcessingObject<T> successor;
+
+    public void setSuccessor(ProcessingObject<T> successor) {
+      this.successor = successor;
+    }
+
+    public T handle(T input) {
+      T r = handleWork(input);
+      if (successor != null) {
+        return successor.handle(r);
+      }
+      return r;
+    }
+
+    abstract protected T handleWork(T input);
+
+  }
+
+  private static class HeaderTextProcessing extends ProcessingObject<String> {
+
+    @Override
+    public String handleWork(String text) {
+      return "From Raoul, Mario and Alan: " + text;
+    }
+
+  }
+
+  private static class SpellCheckerProcessing extends ProcessingObject<String> {
+
+    @Override
+    public String handleWork(String text) {
+      return text.replaceAll("labda", "lambda");
+    }
+
+  }
+
+  static private class ProductFactory {
+
+    public static Product createProduct(String name) {
+      switch (name) {
+        case "loan":
+          return new Loan();
+        case "stock":
+          return new Stock();
+        case "bond":
+          return new Bond();
+        default:
+          throw new RuntimeException("No such product " + name);
+      }
+    }
+
+    public static Product createProductLambda(String name) {
+      Supplier<Product> p = map.get(name);
+      if (p != null) {
+        return p.get();
+      }
+      throw new RuntimeException("No such product " + name);
+    }
+  }
+
+  static private interface Product {}
+  static private class Loan implements Product {}
+  static private class Stock implements Product {}
+  static private class Bond implements Product {}
+
+  final static private Map<String, Supplier<Product>> map = new HashMap<>();
+  static {
+    map.put("loan", Loan::new);
+    map.put("stock", Stock::new);
+    map.put("bond", Bond::new);
   }
 }
 
