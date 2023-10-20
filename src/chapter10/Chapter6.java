@@ -30,6 +30,18 @@ public class Chapter6 {
     order.addTrade(trade1);
 
 //    굉장히 장황한 코드가 되었다.
-//    메서드 체인을 통해 DSL을 구현해보자.ㄴ
+//    메서드 체인을 통해 DSL을 구현해보자.
+    Order order2 = MethodChainOrderBuilder.forCustomer("BigBank")
+        .buy(80)
+        .stock("IBM")
+        .on("NYE")
+        .at(120.00)
+        .sell(50)
+        .stock("삼성전자")
+        .on("KOSPI")
+        .at(375.00)
+        .end();
+
+    System.out.println(order2);
   }
 }
