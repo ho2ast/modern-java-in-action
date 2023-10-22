@@ -1,6 +1,8 @@
 package chapter10;
 
-public class Chapter6 {
+import static chapter10.NestedFunctionOrderBuilder.*;
+
+public class Chapter10 {
 
 //  람다를 이용한 도메인 전용 언어
 //  DSL은 특정 도메인을 대상으로 만들어진 특수 프로그래밍 언어
@@ -44,4 +46,26 @@ public class Chapter6 {
 
     System.out.println(order2);
   }
+
+//  위의 기능을 중첩죈 함수(Nested Function)를 이용하여 DSL 패턴을 만들어 보자
+//  NestedFunctionOrderBuilder 을 구현한다.
+  Order order = order("Dongho",
+      buy(10,
+          stock("SAMSUN", "KOSPI"), at(70000))
+  );
+
+
+//  람다 표현식을 이용한 함수 시퀀싱
+//  LambdaOrderBuilder 를 구현한다.
+  Order order2 = LambdaOrderBuilder.order(o -> {
+    o.forConsumer("Dongho");
+    o.buy(t -> {
+      t.quantity(10);
+      t.price(70000);
+      t.stock(s -> {
+        s.symbol("SMAsuNG");
+        s.market("KOSPI");
+      });
+    });
+  });
 }
